@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>US Population Data</title>
+    <style>
+      table {
+        width: auto;
+        border-collapse: collapse;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>US Population</h2>
+    <table id="populationTable">
+      <thead>
+        <tr>
+          <th>Year</th>
+          <th>Population</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      function fetchPopulationData() {
+        fetch(
+          "https://datausa.io/api/data?drilldowns=Nation&measures=Population"
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            const populationData = data.data;
+            populationData.sort((a, b) => a.Year.localeCompare(b.Year));
+            const tableBody = document
+              .getElementById("populationTable")
+              .querySelector("tbody");
+            tableBody.innerHTML = "";
+            populationData.forEach((item) => {
+              const row = tableBody.insertRow();
+              const yearCell = row.insertCell(0);
+              const populationCell = row.insertCell(1);
+              yearCell.textContent = item.Year;
+              populationCell.textContent = item.Population.toLocaleString();
+            });
+          })
+          .catch((error) =>
+            console.error("Error fetching population data:", error)
+          );
+      }
+
+      window.onload = fetchPopulationData;
+    </script>
+  </body>
+</html>
